@@ -1,0 +1,36 @@
+# Each sample gets its own copy of this project:
+#
+#   default   Playwright MCP server and headless Chromium. The agent's browser tools run here.
+#   timewarp  The Wiki, News and Shop servers for the sample's UI version. It shares the
+#             `default` network namespace, so the browser reaches them on localhost:5000-5002,
+#             the URLs used by the upstream TimeWarp harness.
+#
+# SAMPLE_METADATA_UI_VERSION is filled in by Inspect from each sample's metadata.
+services:
+  default:
+    image: mcr.microsoft.com/playwright/mcp:v0.0.82@sha256:77dccc5ce9e94cb8ae7ebea87ddbb6cd54b05760c4d63c54e16accf2726b8734
+    # The image's entrypoint starts the MCP server; Inspect starts it per sample instead.
+    entrypoint: ["sleep", "infinity"]
+    # Reaps the browser processes that the MCP server leaves behind.
+    init: true
+    mem_limit: 2g
+    cpus: 1
+
+  timewarp:
+    build:
+      context: ./env
+    image: timewarp-env:0.1.0
+    network_mode: "service:default"
+    init: true
+    environment:
+      TIMEWARP_UI_VERSION: "${SAMPLE_METADATA_UI_VERSION:-6}"
+      TIMEWARP_SITES: "wiki,news,webshop"
+    healthcheck:
+      test: ["CMD", "python", "/opt/timewarp/healthcheck.py"]
+      interval: 10s
+      timeout: 150s
+      start_period: 300s
+      start_interval: 5s
+      retries: 3
+    mem_limit: 5g
+    cpus: 2

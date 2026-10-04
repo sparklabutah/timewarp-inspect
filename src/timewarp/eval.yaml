@@ -1,0 +1,18 @@
+title: 'TimeWarp: Evaluating Web Agents by Revisiting the Past'
+description: |-
+  Measures how robust web agents are to changes in web UI over time. Agents answer questions and place orders on three locally served websites (Wiki, News and Shop), each rendered in six UI versions that follow web design from the early 2000s to today. The same 231 goals are posed in every version; the default test split has 103 goals (618 samples). Answers are scored with deterministic string, number and list verifiers, plus an LLM judge for 2 goals.
+arxiv: https://arxiv.org/abs/2603.04949v3
+group: Assistants
+contributors:
+  - farhanishmam
+version: "1-A"
+tasks:
+  - name: timewarp
+    dataset_samples: 618
+tags:
+  - Agent
+metadata:
+  requires:
+    internet: true
+  sandbox:
+    - solver
